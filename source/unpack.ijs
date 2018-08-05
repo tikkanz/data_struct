@@ -1,24 +1,3 @@
-NB. Package to read/unpack C structures
-
-Note 'What is a Struct?'
-A struct is described by:
-     a) a format string describing the types and lengths of the fields it contains
-     b) a list of boxed field names
-     c) a Name
-
-In it's simplest form only the format string is required to read the struct. But to
-do anything more complicated, for example read only some fields, then other info is
-needed too. Potentially could represent different structs as classes, but for now will 
-just use an optionally boxed structure to define one.
-Inputs to verbs will need: 
-   * Struct definition,
-   * data (binary string or filename),
-   * optional flags (change Endianness, subset of Fields to read, statement to 
-filter records)
-In addition a mapping of C types to J types is required.
-)
-
-cocurrent 'struct'
 NB. unpack
 
 NB. Table mapping C types to J types
@@ -151,16 +130,3 @@ unpackFile=: 3 :0
   st_file=. }.y  NB. handle reading part of a file
   x unpack st_def ([ ; 0&{::@[ readStructRecs ,/@])  st_file
 )
-NB. util
-
-NB.*eachunderv c Applies verb in gerund m to corresponding cell of y
-NB. m is gerund, v is a verb.  [x] (k{u)`:6 &. v is applied to cell k of y
-NB. NB. http://www.jsoftware.com/pipermail/programming/2009-August/015982.html
-NB. Has spec equivalent to conjunction "respectively" in misc/miscutils
-eachunderv=: 2 : 0
-   m v 1 :(':';'x `:6&.u y')"_1 y
-:
-   m v 1 :(':';'x `:6&.u&>/ y')"_1 x ,&<"_1 y
-)
-
-eachv=: eachunderv>
