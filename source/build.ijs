@@ -1,6 +1,6 @@
 NB. build
-
-writesource_jp_ '~Addons/data/struct/source';'~Addons/data/struct/struct.ijs'
+require 'project'
+writesource_jp_ '~Addons/data_struct/source';'~Addons/data_struct/struct.ijs'
 
 NB. (jpath '~addons/data/struct/struct.ijs') (fcopynew ::0:) jpath '~Addons/data/struct/struct.ijs'
 
