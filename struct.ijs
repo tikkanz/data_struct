@@ -1,8 +1,8 @@
-NB. Script to read/unpack C structures
+NB. Package to read/unpack C structures
 
 Note 'What is a Struct?'
 A struct is described by:
-     a) a format string describing the type and lengths of the fields it contains
+     a) a format string describing the types and lengths of the fields it contains
      b) a list of boxed field names
      c) a Name
 
@@ -115,8 +115,8 @@ reverseNumericFields=: ([: (|."1)&.> maskNumeric@[ # ])`(maskNumeric@[ # i.@#@])
 
 NB.*unpack v Unpack and convert the fields in a binary Struct string folded into a table of records
 NB. y is: 2-item list of boxed strings
-NB.    0 {:: Format String
-NB.    1 {:: Folded Struct string (i.e. table of recs)
+NB.    0 {:: Struct Definition
+NB.    1 {:: Struct Data - folded Struct string (i.e. table of recs)
 NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
 NB. eg: unpack FormatString; folded struct string
 NB. eg: 1 unpack FormatString; folded struct string
@@ -125,29 +125,30 @@ unpack=: 3 :0
   0 unpack y
 :
   chgEndian=. x
-  'fmtstr struct'=. y
-  struct=. fmtstr parseStructFields struct
+  'st_def st_dat'=. y
+  'st_fmt st_flds'=. st_def
+  st_dat=. st_fmt parseStructFields st_dat
   if. chgEndian do.
-    struct=. fmtstr reverseNumericFields struct
+    st_dat=. st_fmt reverseNumericFields st_dat
   end.
-  Decrypt=. buildConversionGerund fmtstr
-  Decrypt eachv struct
+  Decrypt=. buildConversionGerund st_fmt
+  Decrypt eachv st_dat
 )
 
 NB.*unpackFile v Unpack and convert the fields in a binary Struct file
 NB. y is: 2 or 3-item list of boxed inputs
-NB.    0 {:: Format String
+NB.    0 {:: Struct Definition
 NB.    1 {:: Filename of binary Struct file
 NB.    2 {:: optional 2-item list of integers (starting byte and number of bytes to read from file)
 NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
-NB. eg: unpackFile FormatString;struct_filename
-NB. eg: 1 unpackFile FormatString;struct_filename ; startbyte,bytelength
+NB. eg: unpackFile Struct_Defn ; struct_filename
+NB. eg: 1 unpackFile Struct_Defn ; struct_filename ; startbyte,bytelength
 unpackFile=: 3 :0
   0 unpackFile y
 :
-  fmtstr=. 0{:: y
-  structfile=. }.y  NB. handle reading part of a file
-  x unpack fmtstr ([ ; readStructRecs) structfile 
+  st_def=. 0 {:: y
+  st_file=. }.y  NB. handle reading part of a file
+  x unpack st_def ([ ; 0&{::@[ readStructRecs ,/@])  st_file
 )
 
 NB.*eachunderv c Applies verb in gerund m to corresponding cell of y
@@ -165,16 +166,22 @@ eachv=: eachunderv>
 Note 'Testing'
 
 ANIMAL_fmt=: '3i6H2h4f'
+ANIMAL_flds=: ;:'anml_key sire_anml_key dam_anml_key breed dvalue yob origin sirecode sex inbreed holstein prop_hf prop_jer prop_ayr prop_other'
 PWSUMRY_fmt=: 'i2H4d3c10s2s' 
+PWSUMRY_flds=: ;:'anml_key breed ssn_of_brth b p ba pa r1 r2 r3 mapref herdnum'
 
 ANIMAL_LEND_bin=: fread 'test/ANIMAL_lend_sample.bin'
-PWSUMRY_BEND_bin=: fread 'test/PWSUMMRY_bend_sample.bin'
+PWSUMRY_BEND_bin=: fread 'test/PWSUMRY_bend_sample.bin'
 
-unpack '3i6H2h4f';ANIMAL_LEND_bin
-1 unpack 'i2H4d3c10s2s';PWSUMRY_BEND_bin
+ANIMAL_strecs=: ANIMAL_fmt getStructRecs ANIMAL_LEND_bin
+PWSUMRY_strecs=: PWSUMRY_fmt getStructRecs PWSUMRY_BEND_bin
 
-unpackFile '3i6H2h4f';'ANIMAL_lend_sample.bin'
-1 unpackFile 'i2H4d3c10s2s';'PWSUMRY_bend_sample.bin'
+,.&.> unpack (ANIMAL_fmt;<ANIMAL_flds); ANIMAL_strecs
+,.&.> 1 unpack (PWSUMRY_fmt;<PWSUMRY_flds); PWSUMRY_strecs
+
+unpackFile (ANIMAL_fmt;<ANIMAL_flds);'test/ANIMAL_lend_sample.bin'
+1 unpackFile (PWSUMRY_fmt;<PWSUMRY_flds);'test/PWSUMRY_bend_sample.bin'
+1 unpackFile (PWSUMRY_fmt;<PWSUMRY_flds);'test/PWSUMRY_bend_sample.bin'; 3 4 * 55
 )
 
 Note 'Format strings'
