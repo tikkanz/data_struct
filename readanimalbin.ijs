@@ -64,9 +64,6 @@ getRecsFromAnimStruct=: 4 :0
   ped
 )
 
-ifa=: <@(>"1)@|:     NB. inverted table from atoms
-afi=: |:@:(<"_1@>)    NB. atoms from inverted table
-
 NB.*makeStructTable v Formats processed records as boxed table with header
 NB.eg: makeStructTable readFromAnimStruct 36543491 25372877
 makeStructTable=: Field_Names , afi

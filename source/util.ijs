@@ -11,3 +11,8 @@ eachunderv=: 2 : 0
 )
 
 eachv=: eachunderv>
+
+NB. see [JWiki Essay on Inverted Table](https://code.jsoftware.com/wiki/Essays/Inverted_Table) 
+NB. for more info on working with inverted tables
+ifa=: <@(>"1)@|:     NB. inverted table from atoms
+afi=: |:@:(<"_1@>)    NB. atoms from inverted table
