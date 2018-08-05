@@ -1,29 +1,29 @@
 NB. reading ANIMAL struct e.g. pedigree.bin
 require 'format/printf general/misc/validate'
-
+coinsert 'animstruct'
 cocurrent 'animstruct'
 NB. require 'data/struct'
-require jpath '~ProjectsGit/data_struct/struct.ijs'
+require jpath '~Addons/data_struct/struct.ijs'
 coinsert 'struct'
 
-DEFAULT_BINARYFILE=: 'test/ANIMAL_lend_sample.bin'
-Struct_flds=: ;:'anml_key sire_anml_key dam_anml_key breed dvalue yob origin sirecode sex inbreed holstein prop_hf prop_jer prop_ayr prop_other'
-Struct_fmt=: '3i6H2h4f'   NB. 'iiiHHHHHHhhffff'
+DEFAULT_ANIMALBIN=: 'test/ANIMAL_lend_sample.bin'
+ANIMAL_flds=: ;:'anml_key sire_anml_key dam_anml_key breed dvalue yob origin sirecode sex inbreed holstein prop_hf prop_jer prop_ayr prop_other'
+ANIMAL_fmt=: '3i6H2h4f'   NB. 'iiiHHHHHHhhffff'
 NB. ANIMAL_fldlens=: 4 4 4 2 2 2 2 2 2 2 2 4 4 4 4 NB. in bytes
 NB. ANIMAL_fldtypes=: 'iiiHHHHHHhhffff'
-ANIMAL=: Struct_fmt;<Struct_flds
+ANIMAL=: ANIMAL_fmt;<ANIMAL_flds
 
 readAnimStruct=: 0&$: : (unpackFile ANIMAL ; ])
 getAnimStruct=: 0&$: : (unpack ANIMAL ; ])
 
 getStructPed=: _2 (ic"1) 12&{."1
-readStructPed=: Struct_fmt getStructPed@readStructRecs ]   NB. read numeric id,sire,dam fields from ANIMAL struct.
+readStructPed=: ANIMAL_fmt getStructPed@readStructRecs ]   NB. read numeric id,sire,dam fields from ANIMAL struct.
 
 NB.*readFromAnimStruct v Read processed records for animalids in [filename] y from ANIMAL struct in filename x
 NB. y is: integer list of animalids to retrieve records from struct for or literal list of 
 NB.       filename containing animalids
 NB. x is: filename for binary file containing structs.
-NB. eg: DEFAULT_BINARYFILE readFromAnimStruct 27894739 27894747
+NB. eg: DEFAULT_ANIMALBIN readFromAnimStruct 27894739 27894747
 NB. eg: '/myfolder/myanimstructfile.bin' readFromAnimStruct _99 ". ];._2 freads 'myanims.ids'
 readFromAnimStruct=: 4 :0
   select. 3!:0 y 
@@ -37,7 +37,7 @@ readFromAnimStruct=: 4 :0
     i.0 0
     return.
   end.
-  ped=. Struct_fmt readStructRecs x                 NB. read pedigree.bin as table (recs by fields)
+  ped=. ANIMAL_fmt readStructRecs x                 NB. read pedigree.bin as table (recs by fields)
   ped getFromAnimStruct ids
 )
 
@@ -51,7 +51,7 @@ getFromAnimStruct=: 4 :0
 
 NB.*getRecsFromAnimStruct v Get records for animalids in y from ANIMAL struct in x
 NB. If y is empty then returns all of struct in x
-NB. eg: (Struct_fmt readStructRecs DEFAULT_BINARYFILE) getRecsFromAnimStruct y
+NB. eg: (ANIMAL_fmt readStructRecs DEFAULT_ANIMALBIN) getRecsFromAnimStruct y
 getRecsFromAnimStruct=: 4 :0
   ids=. y      NB. integer list of ids
   ped=. x      NB. records from pedigree.bin
@@ -72,10 +72,10 @@ afi=: |:@:(<"_1@>)    NB. atoms from inverted table
 
 NB.*makeStructTable v Formats processed records as boxed table with header
 NB.eg: makeStructTable readFromAnimStruct 36543491 25372877
-makeStructTable=: Struct_flds , afi
+makeStructTable=: ANIMAL_flds , afi
 
 NB.*getPedFromAnimStruct v Get pedigree fields for animalids in y from ANIMAL struct in x
-NB. eg: (Struct_fmt readStructRecs DEFAULT_BINARYFILE) getPedFromAnimStruct y
+NB. eg: (ANIMAL_fmt readStructRecs DEFAULT_ANIMALBIN) getPedFromAnimStruct y
 getPedFromAnimStruct=: 4 :0
   ped=. x getRecsFromAnimStruct y
   getStructPed ped
@@ -101,15 +101,15 @@ struct ANIMAL  {             bytes_to_read  J_conversion
 )
 
 Note 'Testing'
-,.&.> readAnimStruct DEFAULT_BINARYFILE
-,.&.> getAnimStruct Struct_fmt readStructRecs DEFAULT_BINARYFILE
-,.&.> DEFAULT_BINARYFILE readFromAnimStruct 27894739 27894747
-,.&.> (Struct_fmt readStructRecs DEFAULT_BINARYFILE) getFromAnimStruct ''
-readStructPed DEFAULT_BINARYFILE
-,.&.> readAnimStruct DEFAULT_BINARYFILE; 3 4 * 44
-makeStructTable readAnimStruct DEFAULT_BINARYFILE; 3 4 * 44
-(Struct_fmt readStructRecs DEFAULT_BINARYFILE) getPedFromAnimStruct 27894739 27894747
-pedtable=: makeStructTable DEFAULT_BINARYFILE readFromAnimStruct 27894739 27894747
-require 'tables/dsv'
-('myfile.tsv';TAB;'') makedsv~ pedtable
+,.&.> readAnimStruct DEFAULT_ANIMALBIN
+,.&.> getAnimStruct ANIMAL_fmt readStructRecs DEFAULT_ANIMALBIN
+,.&.> DEFAULT_ANIMALBIN readFromAnimStruct 27894739 27894747
+,.&.> (ANIMAL_fmt readStructRecs DEFAULT_ANIMALBIN) getFromAnimStruct ''
+readStructPed DEFAULT_ANIMALBIN
+,.&.> readAnimStruct DEFAULT_ANIMALBIN; 3 4 * 44
+makeStructTable readAnimStruct DEFAULT_ANIMALBIN; 3 4 * 44
+(ANIMAL_fmt readStructRecs DEFAULT_ANIMALBIN) getPedFromAnimStruct 27894739 27894747
+pedtable=: makeStructTable DEFAULT_ANIMALBIN readFromAnimStruct 27894739 27894747
+require 'tables/csv'
+makecsv pedtable
 )
