@@ -3,7 +3,9 @@ NB. data/struct manifest
 CAPTION=: 'Struct'
 
 DESCRIPTION=: 0 : 0
-Reading data from a binary struct
+Interpret bytes as packed binary data. 
+This addon performs conversions between J values and C structs 
+represented as bytes (J literals).
 )
 
 VERSION=: '0.1.0'
@@ -12,7 +14,7 @@ RELEASE=: 'j806 j807'
 
 FOLDER=: 'data/struct'
 
-PLATFORMS=: 'win linux darwin'
+PLATFORMS=: ''
 
 FILES=: 0 : 0
 struct.ijs

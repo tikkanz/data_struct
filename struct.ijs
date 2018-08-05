@@ -1,10 +1,12 @@
-NB. Package to read/unpack C structures
+NB. Package to interpret bytes as packed binary data
+
+This package performs conversions between J values and C structs represented as J literals.
 
 Note 'What is a Struct?'
-A struct is described by:
-     a) a format string describing the types and lengths of the fields it contains
-     b) a list of boxed field names
-     c) a Name
+A Struct Definition is a 2-item list of boxed:
+    0 {:: format string describing the types and lengths of the fields it contains
+    1 {:: list of boxed field names
+The name of the noun is the name of the struct
 
 In it's simplest form only the format string is required to read the struct. But to
 do anything more complicated, for example read only some fields, then other info is
