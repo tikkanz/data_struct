@@ -1,7 +1,5 @@
 NB. Package to interpret bytes as packed binary data
 
-This package performs conversions between J values and C structs represented as J literals.
-
 Note 'What is a Struct?'
 A Struct Definition is a 2-item list of boxed:
     0 {:: format string describing the types and lengths of the fields it contains
