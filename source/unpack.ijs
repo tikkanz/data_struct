@@ -42,7 +42,7 @@ NB. getLen v Return vector of field lengths for Struct format string
 getLen=: Field_Sizes {~ Field_Types i. ]
 
 NB. expandFmt v Returns expanded struct format string given a struct format string
-expandFmt=: 3 :0
+expandFmt=: verb define
   types=. (-.&'0123456789') y
   'Unhandled C-type in format string' assert types e. Field_Types
   nums=. }. 1 ". (,'9') , (e.&Field_Types -.&Field_Types;.2 ]) y
@@ -52,7 +52,7 @@ expandFmt=: 3 :0
 
 NB.*calcSize v Returns list of field lengths in bytes given a struct format string
 NB. calcSize needs to handle '3s' as a 3-byte string, whereas '3c' or '3i' are 3 1-byte character fields or 3 4-byte integers
-calcSize=: 3 :0
+calcSize=: verb define
   fmtstr=. expandFmt y
   types=. (-.&'0123456789') fmtstr
   nums=. }. 1 ". (,'9') , (e.&Field_Types -.&Field_Types;.2 ]) fmtstr
@@ -101,7 +101,7 @@ NB. x is: optional flag to reverse bytes in numeric fields (to handle change in 
 NB. eg: unpack FormatString; folded struct string
 NB. eg: 1 unpack FormatString; folded struct string
 NB. eg: ,.&.> unpack FormatString; folded struct string   NB. better format for displaying struct in session
-unpack=: 3 :0
+unpack=: verb define
   0 unpack y
 :
   chgEndian=. x
@@ -123,7 +123,7 @@ NB.    2 {:: optional 2-item list of integers (starting byte and number of bytes
 NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
 NB. eg: unpackFile Struct_Defn ; struct_filename
 NB. eg: 1 unpackFile Struct_Defn ; struct_filename ; startbyte,bytelength
-unpackFile=: 3 :0
+unpackFile=: verb define
   0 unpackFile y
 :
   st_def=. 0 {:: y
