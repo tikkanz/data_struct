@@ -19,26 +19,58 @@ In addition a mapping of C types to J types is required.
 )
 
 cocurrent 'struct'
+NB. util
+
+NB.*eachunderv c Applies verb in gerund m to corresponding cell of y
+NB. m is gerund, v is a verb.  [x] (k{u)`:6 &. v is applied to cell k of y
+NB. NB. http://www.jsoftware.com/pipermail/programming/2009-August/015982.html
+NB. Has spec equivalent to conjunction "respectively" in misc/miscutils/utils
+eachunderv=: conjunction define
+   m v 1 :(':';'x `:6&.u y')"_1 y
+:
+   m v 1 :(':';'x `:6&.u&>/ y')"_1 x ,&<"_1 y
+)
+
+eachv=: eachunderv>
+
+NB. see [JWiki Essay on Inverted Table](https://code.jsoftware.com/wiki/Essays/Inverted_Table) 
+NB. for more info on working with inverted tables
+ifa=: <@(>"1)@|:     NB. inverted table from atoms
+afi=: |:@:(<"_1@>)    NB. atoms from inverted table
+
+NB.*getFields v Retrieve specified fields in x from table structure y
+NB. y is: 2-item boxed list
+NB.      0 { list of boxed field headers
+NB.      1 { table of data (records by fields)
+NB. x is: field header(s) to retrieve
+NB. EG: 'Name' getFields Staff
+NB. EG: ('Name';'Age') getFields Staff
+getFields=: dyad define
+  flds=. boxopen x
+  'hdr dat'=. y
+  dat {"1~ hdr (#@[ -.~ i.) flds
+)
 NB. unpack
 
 NB. Table mapping C types to J types
 NB. Adapted from: https://docs.python.org/3/library/struct.html
 
-'Types_hdr Types_dat'=: split TAB&splitstring;._2 noun define
-Format	C_Type	J_Type	Size	Numeric
-x	pad byte	no value		0
-c	char	literal	1	0
-h	short	integer	2	1
-H	unsigned short	integer	2	1
-i	int	integer	4	1
-I	unsigned int	integer	4	1
-l	long	integer	4	1
-L	unsigned long	integer	4	1
-q	long long	integer	8	1
-Q	unsigned long long	integer	8	1
-f	float	float	4	1
-d	double	float	8	1
-s	char[]	literal		0
+NB. 'Types_hdr Types_dat'=: split TAB&splitstring;._2 noun define
+Types=: split cut;._2 noun define
+Format C_Type             J_Type   Size Numeric
+x      pad_byte           no_value  0    0
+c      char               literal   1    0
+h      short              integer   2    1
+H      unsigned_short     integer   2    1
+i      int                integer   4    1
+I      unsigned_int       integer   4    1
+l      long               integer   4    1
+L      unsigned_long      integer   4    1
+q      long_long          integer   8    1
+Q      unsigned_long_long integer   8    1
+f      float              float     4    1
+d      double             float     8    1
+s      char[]             literal   1    0
 )
 
 Note 'Types not currently handled'
@@ -51,11 +83,11 @@ NB. Field_Decrypt_Verbs n Verbs for converting string representation of each C-t
 Field_Decrypt_Verbs=: ]`]`(_1 ic ,)`(_1 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_3 ic ,)`(_3 ic ,)`(_1 fc ,)`(_2 fc ,)`]
 
 NB.*Field_Types n List of single letter codes for each supported C-type
-Field_Types=: ; Types_dat {"1~ Types_hdr i. <'Format'
+Field_Types=: ; 'Format' getFields Types
 NB. Field_Sizes n List of field length in bytes for each C-type in Field_Types
-Field_Sizes=: 0 ". > Types_dat {"1~ Types_hdr i. <'Size'
+Field_Sizes=: 0 ". > , 'Size' getFields Types
 NB. Field_Types_Numeric n Boolean list of which supported C-types are numeric (not string/char)
-Field_Types_Numeric=: Field_Types #~ 1 = 0 ". > Types_dat {"1~ Types_hdr i. <'Numeric'
+Field_Types_Numeric=: Field_Types #~ 1 = 0 ". > , 'Numeric' getFields Types
 
 NB. getTypes v Return list of field types for Struct format string
 getTypes=: '0123456789' -.~ expandFmt
@@ -63,7 +95,7 @@ NB. getLen v Return vector of field lengths for Struct format string
 getLen=: Field_Sizes {~ Field_Types i. ]
 
 NB. expandFmt v Returns expanded struct format string given a struct format string
-expandFmt=: 3 :0
+expandFmt=: verb define
   types=. (-.&'0123456789') y
   'Unhandled C-type in format string' assert types e. Field_Types
   nums=. }. 1 ". (,'9') , (e.&Field_Types -.&Field_Types;.2 ]) y
@@ -73,7 +105,7 @@ expandFmt=: 3 :0
 
 NB.*calcSize v Returns list of field lengths in bytes given a struct format string
 NB. calcSize needs to handle '3s' as a 3-byte string, whereas '3c' or '3i' are 3 1-byte character fields or 3 4-byte integers
-calcSize=: 3 :0
+calcSize=: verb define
   fmtstr=. expandFmt y
   types=. (-.&'0123456789') fmtstr
   nums=. }. 1 ". (,'9') , (e.&Field_Types -.&Field_Types;.2 ]) fmtstr
@@ -122,7 +154,7 @@ NB. x is: optional flag to reverse bytes in numeric fields (to handle change in 
 NB. eg: unpack FormatString; folded struct string
 NB. eg: 1 unpack FormatString; folded struct string
 NB. eg: ,.&.> unpack FormatString; folded struct string   NB. better format for displaying struct in session
-unpack=: 3 :0
+unpack=: verb define
   0 unpack y
 :
   chgEndian=. x
@@ -144,28 +176,10 @@ NB.    2 {:: optional 2-item list of integers (starting byte and number of bytes
 NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
 NB. eg: unpackFile Struct_Defn ; struct_filename
 NB. eg: 1 unpackFile Struct_Defn ; struct_filename ; startbyte,bytelength
-unpackFile=: 3 :0
+unpackFile=: verb define
   0 unpackFile y
 :
   st_def=. 0 {:: y
   st_file=. }.y  NB. handle reading part of a file
   x unpack st_def ([ ; 0&{::@[ readStructRecs ,/@])  st_file
 )
-NB. util
-
-NB.*eachunderv c Applies verb in gerund m to corresponding cell of y
-NB. m is gerund, v is a verb.  [x] (k{u)`:6 &. v is applied to cell k of y
-NB. NB. http://www.jsoftware.com/pipermail/programming/2009-August/015982.html
-NB. Has spec equivalent to conjunction "respectively" in misc/miscutils
-eachunderv=: 2 : 0
-   m v 1 :(':';'x `:6&.u y')"_1 y
-:
-   m v 1 :(':';'x `:6&.u&>/ y')"_1 x ,&<"_1 y
-)
-
-eachv=: eachunderv>
-
-NB. see [JWiki Essay on Inverted Table](https://code.jsoftware.com/wiki/Essays/Inverted_Table) 
-NB. for more info on working with inverted tables
-ifa=: <@(>"1)@|:     NB. inverted table from atoms
-afi=: |:@:(<"_1@>)    NB. atoms from inverted table
