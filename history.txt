@@ -1,5 +1,8 @@
 data/struct - change history
 
+== 0.2.0 ==
+ * Add pack (writing) functionality
+
 == 0.1.0 ==
  * Initial release
 

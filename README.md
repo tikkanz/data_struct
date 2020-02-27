@@ -16,7 +16,8 @@ Example usage:
    ANIMAL_flds=: ;:'anml_id sire_id dam_id breed dvalue yob origin sirecode sex inbreed hol prop_hf prop_jer prop_ayr prop_other'
    ANIMAL=: ANIMAL_fmt; <ANIMAL_flds    NB. Struct definition
 
-   ,.&.> unpackFile ANIMAL;'test/ANIMAL_lend_sample.bin'
+   BoxedFields=: unpackFile ANIMAL;'test/ANIMAL_lend_sample.bin'
+   ,.&.> BoxedFields
 +--------+--------+--------+-+-----+---+-+-+-+---+----+-------+-------+-+-+
 |27894738|       0|25262378|1|13496|110|0|0|2|  0|3852|0.96875|0.03125|0|0|
 |27894739|       0|25042174|1|13363|110|0|0|2|  0|2509|      1|      0|0|0|
@@ -29,4 +30,7 @@ Example usage:
 |27894748|18392104|23470741|1|20134|110|0|0|2| 86|5742|  0.875|  0.125|0|0|
 |27894749|20995004|25090535|9|20282|110|0|0|2|125|2207|  0.375|  0.625|0|0|
 +--------+--------+--------+-+-----+---+-+-+-+---+----+-------+-------+-+-+
+
+   (fread 'test/ANIMAL_lend_sample.bin') -: pack ANIMAL;<BoxedFields  NB. recreate binary
+1
 ```

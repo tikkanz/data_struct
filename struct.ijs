@@ -50,7 +50,7 @@ getFields=: dyad define
   'hdr dat'=. y
   dat {"1~ hdr (#@[ -.~ i.) flds
 )
-NB. unpack
+NB. typemap
 
 NB. Table mapping C types to J types
 NB. Adapted from: https://docs.python.org/3/library/struct.html
@@ -81,6 +81,9 @@ B	unsigned char	integer	1	1
 
 NB. Field_Decrypt_Verbs n Verbs for converting string representation of each C-type in same order as Field_Types
 Field_Decrypt_Verbs=: ]`]`(_1 ic ,)`(_1 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_3 ic ,)`(_3 ic ,)`(_1 fc ,)`(_2 fc ,)`]
+
+NB. Field_Encrypt_Verbs n Verbs for converting string representation of each C-type in same order as Field_Types
+Field_Encrypt_Verbs=: ]`]`(_2 ]\ 1 ic ])`(_2 ]\ 1 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_8 ]\ 3 ic ])`(_8 ]\ 3 ic ])`(_4 ]\ 1 fc ])`(_8 ]\ 2 fc ])`]
 
 NB.*Field_Types n List of single letter codes for each supported C-type
 Field_Types=: ; 'Format' getFields Types
@@ -115,8 +118,15 @@ calcSize=: verb define
 NB. maskNumeric v Return mask of numeric fields of Struct format string
 maskNumeric=: Field_Types_Numeric e.~ getTypes
 
-NB. buildConversionGerund v Returns gerund of decryption verbs for Struct format string
-buildConversionGerund=: Field_Decrypt_Verbs {~ Field_Types i. getTypes
+NB.*reverseNumericFields v Reverse bytes of numeric fields (handle changes in Endianness)
+NB. form: formatstr reverseNumericFields ParsedStruct
+reverseNumericFields=: ([: (|."1)&.> maskNumeric@[ # ])`(maskNumeric@[ # i.@#@])`] }
+
+NB. buildConversionGerund v Returns gerund of decryption/encryption verbs for Struct format string
+NB. by default left arg is 0 (decryption), 1 is encryption
+NB. buildConversionGerund=: Field_Decrypt_Verbs {~ Field_Types i. getTypes
+buildConversionGerund=: (0&$:) : (((Field_Decrypt_Verbs;<Field_Encrypt_Verbs) {::~ ])@[ {~ (Field_Types i. getTypes)@])
+NB. unpack
 
 NB.*getStructRecs v Folds struct string into records of length specified by struct format string
 getStructRecs=: -@(+/)@calcSize@[ ]\ ]
@@ -142,18 +152,14 @@ NB. eg: fmtstr readStructFields 'mystruct.bin'
 NB. eg: fmtstr readStructFields 'mystruct.bin';10000 200
 readStructFields=: [ parseStructFields readStructRecs
 
-NB.*reverseNumericFields v Reverse bytes of numeric fields (handle changes in Endianness)
-NB. form: formatstr reverseNumericFields ParsedStruct
-reverseNumericFields=: ([: (|."1)&.> maskNumeric@[ # ])`(maskNumeric@[ # i.@#@])`] }
-
 NB.*unpack v Unpack and convert the fields in a binary Struct string folded into a table of records
 NB. y is: 2-item list of boxed strings
 NB.    0 {:: Struct Definition
-NB.    1 {:: Struct Data - folded Struct string (i.e. table of recs)
+NB.    1 {:: Struct Data - Folded Struct string (i.e. table of recs)
 NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
-NB. eg: unpack FormatString; folded struct string
-NB. eg: 1 unpack FormatString; folded struct string
-NB. eg: ,.&.> unpack FormatString; folded struct string   NB. better format for displaying struct in session
+NB. eg: unpack FormatString; folded_struct_string
+NB. eg: 1 unpack FormatString; folded_struct_string
+NB. eg: ,.&.> unpack FormatString; folded_struct_string   NB. better format for displaying struct in session
 unpack=: verb define
   0 unpack y
 :
@@ -182,4 +188,47 @@ unpackFile=: verb define
   st_def=. 0 {:: y
   st_file=. }.y  NB. handle reading part of a file
   x unpack st_def ([ ; 0&{::@[ readStructRecs ,/@])  st_file
+)
+NB. pack
+
+NB.*unBox2StructRecs v Unboxes fields to a folded struct string with record length specified by struct format string
+unBox2StructRecs=: [: ; ,.&.>/
+
+NB.*pack v Pack and convert boxed fields to a binary Struct string folded into a table of records
+NB. y is: 2-item list of boxed data
+NB.    0 {:: Struct Definition
+NB.    1 {:: Struct Data - List of boxed fields in J format
+NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
+NB. eg: pack FormatString; boxed_fields
+NB. eg: 1 pack FormatString; boxed_fields
+pack=: verb define
+  0 pack y
+:
+  chgEndian=. x
+  'st_def st_dat'=. y
+  'st_fmt st_flds'=. st_def
+  Encrypt=. 1 buildConversionGerund st_fmt
+  st_dat=. Encrypt eachv st_dat
+  if. chgEndian do.
+    st_dat=. st_fmt reverseNumericFields st_dat
+  end.
+  unBox2StructRecs st_dat
+)
+
+NB.*packFile v Pack and convert boxed list of fields to a binary Struct file
+NB. y is: 2-item list of boxed inputs
+NB.    0 {:: Struct Definition
+NB.    1 {:: Struct Data - List of boxed fields in J format
+NB. x is: 1- or 2-item list of boxed output parameters
+NB.    0 {:: Name of binary Struct file to write
+NB.    1 {:: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
+NB. eg: packFile Struct_Defn ; struct_filename
+NB. eg: 1 packFile Struct_Defn ; struct_filename
+packFile=: verb define
+  0 packFile y
+:
+  st_def=. 0 {:: y
+  st_dat=. 1 {:: y
+  'st_file chgEndian'=. 2{. (boxopen x) , <0
+  st_file fwrite~ , chgEndian pack st_def
 )

@@ -1,5 +1,4 @@
-NB. Field_Encrypt_Verbs n Verbs for converting string representation of each C-type in same order as Field_Types
-Field_Encrypt_Verbs=: ]`]`(_2 ]\ 1 ic ])`(_2 ]\ 1 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_8 ]\ 3 ic ])`(_8 ]\ 3 ic ])`(_4 ]\ 1 fc ])`(_8 ]\ 2 fc ])`]
+NB. pack
 
 NB.*unBox2StructRecs v Unboxes fields to a folded struct string with record length specified by struct format string
 unBox2StructRecs=: [: ; ,.&.>/

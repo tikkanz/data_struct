@@ -8,9 +8,9 @@ This addon performs conversions between J values and C structs
 represented as bytes (J literals).
 )
 
-VERSION=: '0.1.0'
+VERSION=: '0.2.0'
 
-RELEASE=: 'j806 j807'
+RELEASE=: 'j806 j807 j901'
 
 FOLDER=: 'data/struct'
 
