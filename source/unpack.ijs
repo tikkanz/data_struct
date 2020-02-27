@@ -64,7 +64,9 @@ NB. maskNumeric v Return mask of numeric fields of Struct format string
 maskNumeric=: Field_Types_Numeric e.~ getTypes
 
 NB. buildConversionGerund v Returns gerund of decryption verbs for Struct format string
-buildConversionGerund=: Field_Decrypt_Verbs {~ Field_Types i. getTypes
+NB. by default left arg is 0 (decryption), 1 is encryption
+NB. buildConversionGerund=: Field_Decrypt_Verbs {~ Field_Types i. getTypes
+buildConversionGerund=: (0&$:) : (((Field_Decrypt_Verbs;<Field_Encrypt_Verbs) {::~ ])@[ {~ (Field_Types i. getTypes)@])
 
 NB.*getStructRecs v Folds struct string into records of length specified by struct format string
 getStructRecs=: -@(+/)@calcSize@[ ]\ ]
