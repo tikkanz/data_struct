@@ -31,13 +31,13 @@ NB.    1 {:: Struct Data - List of boxed fields in J format
 NB. x is: 1- or 2-item list of boxed output parameters
 NB.    0 {:: Name of binary Struct file to write
 NB.    1 {:: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
-NB. eg: packFile Struct_Defn ; struct_filename
-NB. eg: 1 packFile Struct_Defn ; struct_filename
+NB. eg: struct_filename packFile Struct_Defn ;< Struct_data
+NB. eg: (struct_filename ; 1) packFile Struct_Defn ;< Struct_data
 packFile=: verb define
   0 packFile y
 :
   st_def=. 0 {:: y
   st_dat=. 1 {:: y
   'st_file chgEndian'=. 2{. (boxopen x) , <0
-  st_file fwrite~ , chgEndian pack st_def
+  st_file fwrite~ , chgEndian pack st_def ;< st_dat
 )
