@@ -5,7 +5,7 @@ Structs are unpacked into an inverted table format with the appropriate type con
 
 `data/struct` uses [Format Strings](https://docs.python.org/3/library/struct.html#format-characters) as compact descriptions of the layout of the C structs and the intended conversion to J values. The definition of these format strings and other ideas are borrowed from the Python Standard Library [struct](https://docs.python.org/3/library/struct.html).
 
-Currently the addon only reads data from structs.
+The addon reads data from and writes data to structs.
 
 Example usage:
 ```j
