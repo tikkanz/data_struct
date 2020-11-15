@@ -21,7 +21,11 @@
         "command": "${config:j.executablePath}",
         "args": ["${workspaceFolder}\\source\\build.ijs", "-js", "exit 0"]
       },
-      "group": "build"
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
     },
     {
       "label": "Test Project",
