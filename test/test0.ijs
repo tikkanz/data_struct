@@ -1,6 +1,5 @@
-load '~Addons/data_struct/struct.ijs'
+load '~addons/data/struct/struct.ijs'
 coinsert 'struct'
-Note 'Testing'
 
 ANIMAL_fmt=: '3i6H2h4f'
 ANIMAL_flds=: ;:'anml_key sire_anml_key dam_anml_key breed dvalue yob origin sirecode sex inbreed holstein prop_hf prop_jer prop_ayr prop_other'
@@ -9,9 +8,17 @@ PWSUMRY_fmt=: 'i2H4d3c10s2s'
 PWSUMRY_flds=: ;:'anml_key breed ssn_of_brth b p ba pa r1 r2 r3 mapref herdnum'
 PWSUMRY=: PWSUMRY_fmt ;< PWSUMRY_flds
 
-ANIMAL_LEND_bin=: fread 'test/ANIMAL_lend_sample.bin'
-PWSUMRY_BEND_bin=: fread 'test/PWSUMRY_bend_sample.bin'
+ANIMAL_LEND_bin=: fread 'test/ANIMAL_lend_sample.bin'    NB. example little endian binary
+PWSUMRY_BEND_bin=: fread 'test/PWSUMRY_bend_sample.bin'  NB. example big endian binary
 
+BoxedFields=: unpackFile ANIMAL;'test/ANIMAL_lend_sample.bin'
+(fread 'test/ANIMAL_lend_sample.bin') -: , pack ANIMAL;<BoxedFields
+BoxedFields=: 1 unpackFile PWSUMRY;'test/PWSUMRY_bend_sample.bin'
+(fread 'test/PWSUMRY_bend_sample.bin') -: , 1 pack PWSUMRY;<BoxedFields
+
+echo 'Passed data_struct tests'
+
+Note 'Testing'
 ANIMAL_strecs=: ANIMAL_fmt getStructRecs ANIMAL_LEND_bin
 PWSUMRY_strecs=: PWSUMRY_fmt getStructRecs PWSUMRY_BEND_bin
 
@@ -21,11 +28,6 @@ PWSUMRY_strecs=: PWSUMRY_fmt getStructRecs PWSUMRY_BEND_bin
 unpackFile ANIMAL ; 'test/ANIMAL_lend_sample.bin'
 1 unpackFile PWSUMRY ;'test/PWSUMRY_bend_sample.bin'
 1 unpackFile PWSUMRY ;'test/PWSUMRY_bend_sample.bin'; 3 4 * 55
-
-BoxedFields=: unpackFile ANIMAL;'test/ANIMAL_lend_sample.bin'
-(fread 'test/ANIMAL_lend_sample.bin') -: , pack ANIMAL;<BoxedFields
-BoxedFields=: 1 unpackFile PWSUMRY;'test/PWSUMRY_bend_sample.bin'
-(fread 'test/PWSUMRY_bend_sample.bin') -: , 1 pack PWSUMRY;<BoxedFields
 )
 
 Note 'Format strings'
