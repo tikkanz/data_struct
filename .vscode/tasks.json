@@ -3,16 +3,23 @@
   // for the documentation about the tasks.json format
   // Note that `jc` is a symlink in path (e.g. `/usr/local/bin/` ) to `/opt/j/j901/bin/jconsole`
   "version": "2.0.0",
+  "windows": {
+    "options": {
+        "shell": {
+            "executable": "powershell.exe",
+        }
+    }
+  },
   "tasks": [
     {
       "label": "Build Project",
       "type": "shell",
       "linux": {
-        "command": "jc",
+        "command": "${config:j.executablePath}",
         "args": ["${workspaceFolder}/source/build.ijs", "-js", "exit 0"]
       },
       "windows": {
-        "command": "C:\\Program Files\\j901\\bin\\jconsole.exe",
+        "command": "${config:j.executablePath}",
         "args": ["${workspaceFolder}\\source\\build.ijs", "-js", "exit 0"]
       },
       "group": "build"
@@ -21,11 +28,11 @@
       "label": "Test Project",
       "type": "shell",
       "linux": {
-        "command": "jc",
+        "command": "${config:j.executablePath}",
         "args": ["${workspaceFolder}/source/run.ijs", "-js", "exit 0"]
       },
       "windows": {
-        "command": "C:\\Program Files\\j901\\bin\\jconsole.exe",
+        "command": "${config:j.executablePath}",
         "args": ["${workspaceFolder}\\source\\run.ijs", "-js", "exit 0"]
       },
       "group": "test"
