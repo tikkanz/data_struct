@@ -38,7 +38,10 @@
         "command": "${config:j.executablePath}",
         "args": ["${workspaceFolder}\\source\\run.ijs", "-js", "exit 0"]
       },
-      "group": "test"
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
     }
   ]
 }
