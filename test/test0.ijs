@@ -12,11 +12,11 @@ ANIMAL_LEND_bin=: fread 'test/ANIMAL_lend_sample.bin'    NB. example little endi
 PWSUMRY_BEND_bin=: fread 'test/PWSUMRY_bend_sample.bin'  NB. example big endian binary
 
 BoxedFields=: unpackFile ANIMAL;'test/ANIMAL_lend_sample.bin'
-(fread 'test/ANIMAL_lend_sample.bin') -: , pack ANIMAL;<BoxedFields
+'FAIL' assert (fread 'test/ANIMAL_lend_sample.bin') -: , pack ANIMAL;<BoxedFields
 BoxedFields=: 1 unpackFile PWSUMRY;'test/PWSUMRY_bend_sample.bin'
-(fread 'test/PWSUMRY_bend_sample.bin') -: , 1 pack PWSUMRY;<BoxedFields
+'FAIL' assert (fread 'test/PWSUMRY_bend_sample.bin') -: , 1 pack PWSUMRY;<BoxedFields
 
-echo 'Passed data_struct tests'
+echo 'Finished data_struct tests'
 
 Note 'Testing'
 ANIMAL_strecs=: ANIMAL_fmt getStructRecs ANIMAL_LEND_bin
