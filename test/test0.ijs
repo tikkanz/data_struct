@@ -1,32 +1,43 @@
 AddonPath=: fpath_j_^:2 loc ''
 
-load AddonPath,'/struct.ijs'
-coinsert 'struct'
+before_each=: 3 : 0
+  load AddonPath,'/struct.ijs'
+  coinsert 'struct'
+  load AddonPath,'/test/test_structs.ijs'
+  ANIMAL_fn=: AddonPath,'/',LitEND_fn
+  PWSUMRY_fn=: AddonPath,'/',BigEND_fn
+)
 
-ANIMAL_fmt=: '3i6H2h4f'
-ANIMAL_flds=: ;:'anml_key sire_anml_key dam_anml_key breed dvalue yob origin sirecode sex inbreed holstein prop_hf prop_jer prop_ayr prop_other'
-ANIMAL=: ANIMAL_fmt ;< ANIMAL_flds
+test_fieldfmts=: 3 :0
+  assert 'iiiHHHHHHhhffff' -: expandFmt '3i6H2h4f'
+  assert 'iHHddddccc10s2s' -: expandFmt 'i2H4d3c10s2s'
+)
 
-PWSUMRY_fmt=: 'i2H4d3c10s2s'
-PWSUMRY_flds=: ;:'anml_key breed ssn_of_brth b p ba pa r1 r2 r3 mapref herdnum'
-PWSUMRY=: PWSUMRY_fmt ;< PWSUMRY_flds
+test_fieldsizes=: 3 :0
+  assert 4 4 4 2 2 2 2 2 2 2 2 4 4 4 4 -: calcSize '3i6H2h4f'
+  assert 4 4 4 2 2 2 2 2 2 2 2 4 4 4 4 -: calcSize 'iiiHHHHHHhhffff'
+  assert 4 2 2 8 8 8 8 1 1 1 10 2 -: calcSize 'i2H4d3c10s2s'
+  assert 4 2 2 8 8 8 8 1 1 1 10 2 -: calcSize 'iHHddddccc10s2s'
+)
 
-ANIMAL_LEND_bin=: fread 'test/ANIMAL_lend_sample.bin'    NB. example little endian binary
-PWSUMRY_BEND_bin=: fread 'test/PWSUMRY_bend_sample.bin'  NB. example big endian binary
+NB. test_fieldtypes=: 3 :0
+NB. )
 
-BoxedFields=: unpackFile ANIMAL;'test/ANIMAL_lend_sample.bin'
-'FAIL' assert (fread 'test/ANIMAL_lend_sample.bin') -: , pack ANIMAL;<BoxedFields
-BoxedFields=: 1 unpackFile PWSUMRY;'test/PWSUMRY_bend_sample.bin'
-'FAIL' assert (fread 'test/PWSUMRY_bend_sample.bin') -: , 1 pack PWSUMRY;<BoxedFields
+NB. length of record?
 
-echo 'Finished data_struct tests'
+test_structpacking=: 3 :0
+  AnimalData=: unpackFile ANIMAL;ANIMAL_fn
+  assert ($@,.&> AnimalData) -: 10 ,. (1 >. calcSize * -.@maskNumeric) ANIMAL_fmt    NB. shape of unpacked result is correct
+  assert (fread ANIMAL_fn) -: , pack ANIMAL;<AnimalData                              NB. re-packed result matches file
+
+  PWSumryData=: 1 unpackFile PWSUMRY;PWSUMRY_fn
+  assert ($@,.&> PWSumryData) -: 10 ,. (1 >. calcSize * -.@maskNumeric) PWSUMRY_fmt  NB. shape of unpacked result is correct
+  assert (fread PWSUMRY_fn) -: , 1 pack PWSUMRY;<PWSumryData                         NB. re-packed result matches file
+)
 
 Note 'Testing'
-ANIMAL_strecs=: ANIMAL_fmt getStructRecs ANIMAL_LEND_bin
-PWSUMRY_strecs=: PWSUMRY_fmt getStructRecs PWSUMRY_BEND_bin
-
-,.&.> unpack ANIMAL ; ANIMAL_strecs
-,.&.> 1 unpack PWSUMRY ; PWSUMRY_strecs
+,.&.> unpack ANIMAL ; ANIMAL_fmt getStructRecs ANIMAL_LEND_bin
+,.&.> 1 unpack PWSUMRY ; PWSUMRY_fmt getStructRecs PWSUMRY_BEND_bin
 
 unpackFile ANIMAL ; 'test/ANIMAL_lend_sample.bin'
 1 unpackFile PWSUMRY ;'test/PWSUMRY_bend_sample.bin'
@@ -35,13 +46,9 @@ unpackFile ANIMAL ; 'test/ANIMAL_lend_sample.bin'
 
 Note 'Format strings'
 
-ANIMAL_fmtstr1=. '3i6H2h4f'
 ANIMAL_fmtstr2=. 'iiiHHHHHHhhffff'
-PWSUMRY_fmtstr1=. 'i2H4d3c10s2s'
 PWSUMRY_fmtstr2=. 'iHHddddccc10s2s'
 
-ANIMAL_fldlens=. 4 4 4 2 2 2 2 2 2 2 2 4 4 4 4 NB. in bytes
 ANIMAL_fldtypes=. 'iiiHHHHHHhhffff'
-PWSUMRY_fldlens=. 4 4 4 8 8 8 8 1 1 1 10 2
 PWSUMRY_fldtypes=. 'iHHddddcccss'
 )
