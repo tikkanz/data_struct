@@ -31,6 +31,6 @@ Example usage:
 |27894749|20995004|25090535|9|20282|110|0|0|2|125|2207|  0.375|  0.625|0|0|
 +--------+--------+--------+-+-----+---+-+-+-+---+----+-------+-------+-+-+
 
-   (fread 'test/ANIMAL_lend_sample.bin') -: pack ANIMAL;<BoxedFields  NB. recreate binary
+   (fread 'test/ANIMAL_lend_sample.bin') -: , pack ANIMAL;<BoxedFields  NB. recreate binary
 1
 ```
