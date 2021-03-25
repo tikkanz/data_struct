@@ -3,7 +3,12 @@ require 'project'
 loc_z_=: 3 : 'jpath > (4!:4 <''y'') { 4!:3 $0'  NB. pathname of script calling it
 AddonPath=: fpath_j_^:2 loc ''
 
-writesource_jp_ (AddonPath,'/source');AddonPath,'/struct.ijs'
+Proj_Src=: AddonPath,'/source'
+Proj_Tgt=: AddonPath,'/struct.ijs'
+writesource_jp_ Proj_Src;Proj_Tgt
+
+echo 'Built file: ',Proj_Tgt
+echo 'From: ',Proj_Src
 
 NB. (jpath '~addons/data/struct/struct.ijs') (fcopynew ::0:) jpath '~Addons/data_struct/struct.ijs'
 

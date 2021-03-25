@@ -27,10 +27,10 @@ b	signed char	integer	1	1
 ?	_Bool	boolean	1	1
 )
 
-NB. Field_Decrypt_Verbs n Verbs for converting string representation of each C-type in same order as Types
+NB. Field_Decrypt_Verbs n Verbs for converting string representation of each C-type in same order as Field_Types
 Field_Decrypt_Verbs=: ]`(a. i. ,)`]`(_1 ic ,)`(_1 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_3 ic ,)`(_3 ic ,)`(_1 fc ,)`(_2 fc ,)`]
 
-NB. Field_Encrypt_Verbs n Verbs for converting string representation of each C-type in same order as Types
+NB. Field_Encrypt_Verbs n Verbs for converting string representation of each C-type in same order as Field_Types
 Field_Encrypt_Verbs=: ]`({&a.)`]`(_2 ]\ 1 ic ])`(_2 ]\ 1 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_8 ]\ 3 ic ])`(_8 ]\ 3 ic ])`(_4 ]\ 1 fc ])`(_8 ]\ 2 fc ])`]
 
 NB.*Field_Types n List of single letter codes for each supported C-type
