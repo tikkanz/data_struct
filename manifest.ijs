@@ -8,7 +8,7 @@ This addon performs conversions between J values and C structs
 represented as bytes (J literals).
 )
 
-VERSION=: '0.2.1'
+VERSION=: '0.3.0'
 
 RELEASE=: 'j806 j807 j901'
 
@@ -23,4 +23,5 @@ test/animalstruct.ijs
 test/pwsumrystruct.ijs
 test/ANIMAL_lend_sample.bin
 test/PWSUMRY_bend_sample.bin
+test/SOUTRECD_lend_sample.bin
 )
