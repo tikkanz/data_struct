@@ -59,6 +59,7 @@ NB. 'Types_hdr Types_dat'=: split TAB&splitstring;._2 noun define
 Types=: split cut;._2 noun define
 Format C_Type             J_Type   Size Numeric
 x      pad_byte           no_value  0    0
+B      unsigned_char      integer 	1    1
 c      char               literal   1    0
 h      short              integer   2    1
 H      unsigned_short     integer   2    1
@@ -75,15 +76,14 @@ s      char[]             literal   1    0
 
 Note 'Types not currently handled'
 b	signed char	integer	1	1
-B	unsigned char	integer	1	1
 ?	_Bool	boolean	1	1
 )
 
 NB. Field_Decrypt_Verbs n Verbs for converting string representation of each C-type in same order as Field_Types
-Field_Decrypt_Verbs=: ]`]`(_1 ic ,)`(_1 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_3 ic ,)`(_3 ic ,)`(_1 fc ,)`(_2 fc ,)`]
+Field_Decrypt_Verbs=: ]`(a. i. ,)`]`(_1 ic ,)`(_1 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_2 ic ,)`(_3 ic ,)`(_3 ic ,)`(_1 fc ,)`(_2 fc ,)`]
 
 NB. Field_Encrypt_Verbs n Verbs for converting string representation of each C-type in same order as Field_Types
-Field_Encrypt_Verbs=: ]`]`(_2 ]\ 1 ic ])`(_2 ]\ 1 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_8 ]\ 3 ic ])`(_8 ]\ 3 ic ])`(_4 ]\ 1 fc ])`(_8 ]\ 2 fc ])`]
+Field_Encrypt_Verbs=: ]`({&a.)`]`(_2 ]\ 1 ic ])`(_2 ]\ 1 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_4 ]\ 2 ic ])`(_8 ]\ 3 ic ])`(_8 ]\ 3 ic ])`(_4 ]\ 1 fc ])`(_8 ]\ 2 fc ])`]
 
 NB.*Field_Types n List of single letter codes for each supported C-type
 Field_Types=: ; 'Format' getFields Types

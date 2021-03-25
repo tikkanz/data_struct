@@ -1,5 +1,8 @@
 data/struct - change history
 
+== 0.3.0 ==
+ * Add support for unsigned char (B)
+
 == 0.2.1 ==
  * Add support for build and test tasks in VSCode
  * Fix arg use in packFile
