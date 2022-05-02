@@ -71,4 +71,4 @@ NB. x is: see unpack or unpackFile
 NB. u is: unpack or unpackFile
 NB. result: J Dataframe
 NB. eg: unpackFile toDataframe Struct_Defn ; struct_filename
-toDataFrame=: {{ ((0;1)&{::@] ,: u) }}
+toDataframe=: {{ ((0;1)&{::@] ,: u) }}
