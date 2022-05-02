@@ -1,3 +1,4 @@
+NB.===================
 NB. unpack
 
 NB.*getStructRecs v Folds struct string into records of length specified by struct format string
@@ -29,6 +30,7 @@ NB. y is: 2-item list of boxed strings
 NB.    0 {:: Struct Definition
 NB.    1 {:: Struct Data - Folded Struct string (i.e. table of recs)
 NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
+NB. result: inverted table
 NB. eg: unpack FormatString; folded_struct_string
 NB. eg: 1 unpack FormatString; folded_struct_string
 NB. eg: ,.&.> unpack FormatString; folded_struct_string   NB. better format for displaying struct in session
@@ -52,6 +54,7 @@ NB.    0 {:: Struct Definition
 NB.    1 {:: Filename of binary Struct file
 NB.    2 {:: optional 2-item list of integers (starting byte and number of bytes to read from file)
 NB. x is: optional flag to reverse bytes in numeric fields (to handle change in endianness). Default is 0.
+NB. result: inverted table
 NB. eg: unpackFile Struct_Defn ; struct_filename
 NB. eg: 1 unpackFile Struct_Defn ; struct_filename ; startbyte,bytelength
 unpackFile=: verb define
@@ -61,3 +64,11 @@ unpackFile=: verb define
   st_file=. }.y  NB. handle reading part of a file
   x unpack st_def ([ ; 0&{::@[ readStructRecs ,/@])  st_file
 )
+
+NB.*toDataframe a Converts inverted table to a J Dataframe
+NB. y is: see unpack or unpackFile
+NB. x is: see unpack or unpackFile
+NB. u is: unpack or unpackFile
+NB. result: J Dataframe
+NB. eg: unpackFile toDataframe Struct_Defn ; struct_filename
+toDataFrame=: {{ ((0;1)&{::@] ,: u) }}
