@@ -41,7 +41,7 @@ Usage:
 1
 ```
 
-To use in conjunction with (https://github.com/tikkanz/jdataframe)[Dataframe addon]:
+To use in conjunction with a [Dataframe addon](https://github.com/tikkanz/jdataframe):
 ```j
    require 'tables/dataframe'
    coinsert 'pdataframe'
