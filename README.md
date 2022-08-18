@@ -13,7 +13,7 @@ To install addon, from a J session:
    install 'github:tikkanz/data_struct'
 ```
 
-Usage:
+## Usage
 ```j
    require 'data/struct'
    coinsert 'struct'
