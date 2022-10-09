@@ -47,7 +47,7 @@ To use in conjunction with a [Dataframe addon](https://github.com/tikkanz/jdataf
    coinsert 'pdataframe'
    
    Dataframe=: unpackFile toDataframe ANIMAL;'~addons/data/struct/test/ANIMAL_lend_sample.bin'
-   dfshow Dataframe
+   dfShow Dataframe
 ┌────────┬────────┬────────┬─────┬──────┬───┬──────┬────────┬───┬───────┬────┬───────┬────────┬────────┬──────────┐
 │anml_id │sire_id │dam_id  │breed│dvalue│yob│origin│sirecode│sex│inbreed│hol │prop_hf│prop_jer│prop_ayr│prop_other│
 ├────────┼────────┼────────┼─────┼──────┼───┼──────┼────────┼───┼───────┼────┼───────┼────────┼────────┼──────────┤
