@@ -15,11 +15,11 @@
       "type": "shell",
       "linux": {
         "command": "${config:j.executablePath}",
-        "args": ["${workspaceFolder}/source/build.ijs", "-js", "exit 0"]
+        "args": ["${workspaceFolder}/build.ijs", "-js", "exit 0"]
       },
       "windows": {
         "command": "${config:j.executablePath}",
-        "args": ["${workspaceFolder}\\source\\build.ijs", "-js", "exit 0"]
+        "args": ["${workspaceFolder}\\build.ijs", "-js", "exit 0"]
       },
       "group": {
         "kind": "build",
@@ -32,11 +32,11 @@
       "type": "shell",
       "linux": {
         "command": "${config:j.executablePath}",
-        "args": ["${workspaceFolder}/source/run.ijs", "-js", "exit 0"]
+        "args": ["${workspaceFolder}/run.ijs", "-js", "exit 0"]
       },
       "windows": {
         "command": "${config:j.executablePath}",
-        "args": ["${workspaceFolder}\\source\\run.ijs", "-js", "exit 0"]
+        "args": ["${workspaceFolder}\\run.ijs", "-js", "exit 0"]
       },
       "group": {
         "kind": "test",

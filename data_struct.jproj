@@ -1,0 +1,10 @@
+NB. project: ~Addons/data/struct
+NB.
+NB. defines list of source files.
+NB. path defaults to project directory.
+
+source/init.ijs
+source/util.ijs
+source/types.ijs
+source/unpack.ijs
+source/pack.ijs
